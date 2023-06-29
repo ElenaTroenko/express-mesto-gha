@@ -22,7 +22,7 @@ const createCard = (req, res) => {
 
 
 const deleteCard = (req, res) => {
-  const cardId = req.params.cardId;
+  const cardId = req.params;
   const userId = req.user._id; // ВРЕМЕННО
 
   Card.findById(cardId)
@@ -35,7 +35,7 @@ const deleteCard = (req, res) => {
         res.status(500).send({message: 'Ошибка доступа'});
       }
     })
-    .catch(() => res.status(404).send({message: 'Карточка не найдена'}));
+    .catch(() => res.status(400).send({message: 'Карточка не найдена'}));
 };
 
 const likeCard = (req, res) => {
@@ -52,10 +52,10 @@ const likeCard = (req, res) => {
         )
           .then(card => res.send(card));
       } else {
-        res.status(400).send({message: 'Карта не найдена'});
+        res.status(404).send({message: 'Карта не найдена'});
       }
     })
-    .catch((err) => res.status(500).send({message: `Ошибка при лайке карточки: ${err.message}`}));
+    .catch(() => res.status(400).send({message: 'Ошибка при лайке карточки'}));
 };
 
 const dislikeCard = (req, res) => {
@@ -76,7 +76,7 @@ const dislikeCard = (req, res) => {
         res.status(500).send({message: 'Ошибка доступа'});
       }
     })
-    .catch(() => res.status(400).send({message: 'Карточка не найдена'}));
+    .catch(() => res.status(404).send({message: 'Карточка не найдена'}));
 };
 
 module.exports = { getAllCards, createCard, deleteCard, likeCard, dislikeCard };

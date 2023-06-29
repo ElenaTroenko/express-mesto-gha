@@ -14,7 +14,6 @@ const createCard = (req, res) => {
 
   const owner = new mongoose.Types.ObjectId(id);
 
-  console.log(name, link);
   Card.create({ name, link, owner })
     .then(card => res.send(card))
     .catch(() => res.status(400).send({message: 'Неверные данные'}));
@@ -22,15 +21,15 @@ const createCard = (req, res) => {
 
 
 const deleteCard = (req, res) => {
-  const cardId = req.params;
 
-  Card.findById(cardId)
-    .then(() => {
-      Card.findByIdAndRemove(cardId)
-        .then(() => res.send({message: 'Пост удален'}))
-        .catch(res.status(400).send({message: 'Неверные данные'}));
-    })
-    .catch(() => res.status(404).send({message: 'Карточка не найдена'}));
+  Card.findByIdAndRemove(req.params.cardId)
+    .then((card) => {
+      if (card) {
+        res.send({message: 'удалено'});
+      } else {
+        res.status(404).send({message: 'Карточка не найдена'});
+      }
+    });
 };
 
 const likeCard = (req, res) => {

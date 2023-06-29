@@ -68,7 +68,7 @@ const dislikeCard = (req, res) => {
         res.status(404).send({message: 'Карточка не найдена'});
       }
     })
-    .catch(() => res.status(400).send('Неверный ID'));
+    .catch(() => res.status(400).send({message: 'Неверный ID'}));
 
 };
 

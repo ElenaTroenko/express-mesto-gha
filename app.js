@@ -17,7 +17,8 @@ app.use((req, res, next) => {
 });
 app.use('/', router);
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb',
+);
 
 app.listen(PORT, () => {
   console.log(`Слушаю порт ${PORT}...`);

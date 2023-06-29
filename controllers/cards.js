@@ -1,10 +1,10 @@
 const Card = require('../models/card');
-const { sendError } = require('../utils/utils');
+
 
 const getAllCards = (req, res) => {
   Card.find({})
     .then(allCards => res.send(allCards))
-    .catch((err) => sendError(res, err, 'ошибка получения карточек'));
+    .catch(() => res.status(500).send({message: ''}));
 };
 
 
@@ -13,7 +13,7 @@ const createCard = (req, res) => {
 
   Card.create({ name, link })
     .then(card => res.send(card))
-    .catch((err) => sendError(res, err, 'ошибка создания карточки'));
+    .catch(() => res.status(400).send({message: ''}));
 };
 
 
@@ -26,12 +26,12 @@ const deleteCard = (req, res) => {
       if (card.owner._id == userId) {
         Card.findByIdAndRemove(cardId)
           .then(() => res.send({message: 'Пост удален'}))
-          .catch((err) => sendError(res, err, 'ошибка удаления карточки'));
+          .catch(res.status(400).send({message: ''}));
       } else {
-        sendError(res, {}, 'доступ запрещен');
+        res.status(500).send({message: ''});
       }
     })
-    .catch((err) => sendError(res, err, 'карточка не найдена'));
+    .catch(() => res.status(404).send({message: ''}));
 };
 
 const likeCard = (req, res) => {
@@ -47,12 +47,12 @@ const likeCard = (req, res) => {
           { new: true }
         )
           .then(card => res.send(card))
-          .catch((err) => sendError(res, err, 'ошибка лайка карточки'));
+          .catch(() => res.status(400).send({message: ''}));
       } else {
-        sendError(res, {}, 'доступ запрещен');
+        res.status(500).send({message: ''});
       }
     })
-    .catch((err) => sendError(res, err, 'карточка не найдена'));
+    .catch(() => res.status(404).send({message: ''}));
 };
 
 const dislikeCard = (req, res) => {
@@ -68,12 +68,12 @@ const dislikeCard = (req, res) => {
           { new: true }
         )
           .then(card => res.send(card))
-          .catch((err) => sendError(res, err, 'ошибка отзыва лайка карточки'));
+          .catch(() => res.status(400).send({message: ''}));
       } else {
-        sendError(res, {}, 'доступ запрещен');
+        res.status(500).send({message: ''});
       }
     })
-    .catch((err) => sendError(res, err, 'карточка не найдена'));
+    .catch(() => res.status(404).send({message: ''}));
 };
 
 module.exports = { getAllCards, createCard, deleteCard, likeCard, dislikeCard };

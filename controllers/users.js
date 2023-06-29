@@ -13,9 +13,13 @@ const getUser = (req, res) => {
 
   User.findById(id)
     .then((user) => {
-      res.send(user);
+      if (user) {
+        res.send(user);
+      } else {
+        res.status(404).send({message: 'Пользователь не найден'});
+      }
     })
-    .catch(() => res.status(400).send({message: 'Пользователь не найден'}));
+    .catch(() => res.status(500).send({message: 'Пользователь не найден'}));
 };
 
 const getAllUsers = (req, res) => {
@@ -25,21 +29,31 @@ const getAllUsers = (req, res) => {
 };
 
 const updateUser = (req, res) => {
-  const id = req.user._id;
+  const id = req.user._id; // ВРЕМЕННО
 
-  User.findByIdAndUpdate(id, req.body, { new: true })
-    .then((user) => {
-      res.send(user);
+  User.findById(id)
+    .then(() => {
+      User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
+        .then((user) => {
+          res.send(user);
+        })
+        .catch(() => res.status(400).send({message: 'Неверные данные'}));
     })
     .catch(() => res.status(404).send({message: 'Пользователь не найден'}));
+
+
 };
 
 const updateUserAvatar = (req, res) => {
-  const id = req.user._id;
+  const id = req.user._id; // ВРЕМЕННО
   const avatarLink = req.body.avatar;
 
-  User.findByIdAndUpdate(id, avatarLink, { new: true })
-    .then((user) => res.send(user))
+  User.findById(id)
+    .then(() => {
+      User.findByIdAndUpdate(id, {avatar: avatarLink}, { new: true, runValidators: true })
+        .then((user) => res.send(user))
+        .catch(() => res.status(400).send({message: 'Неверные данные'}));
+    })
     .catch(() => res.status(404).send({message: 'Пользователь не найден'}));
 };
 

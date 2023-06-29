@@ -21,15 +21,22 @@ const createCard = (req, res) => {
 
 
 const deleteCard = (req, res) => {
-
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (card) {
-        res.send({message: 'удалено'});
+        Card.findByIdAndRemove(req.params.cardId)
+          .then(() => {
+            if (card) {
+              res.send({message: 'удалено'});
+            } else {
+              res.status(404).send({message: 'Карточка не найдена'});
+            }
+          });
       } else {
         res.status(404).send({message: 'Карточка не найдена'});
       }
-    });
+    })
+    .catch(() => res.status(400).send({message: 'Ошибка при удалении карточки'}));
 };
 
 const likeCard = (req, res) => {
@@ -46,7 +53,7 @@ const likeCard = (req, res) => {
         )
           .then(card => res.send(card));
       } else {
-        res.status(404).send({message: 'Карта не найдена'});
+        res.status(404).send({message: 'Карточка не найдена'});
       }
     })
     .catch(() => res.status(400).send({message: 'Ошибка при лайке карточки'}));

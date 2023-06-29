@@ -56,17 +56,20 @@ const dislikeCard = (req, res) => {
   const { cardId } = req.params;
   const userId = req.user._id; // ВРЕМЕННО
 
-  Card.findById(cardId)
-    .then(() => {
-      Card.findByIdAndUpdate(
-        cardId,
-        { $pull: { likes: userId } },
-        { new: true }
-      )
-        .then(card => res.send(card))
-        .catch(() => res.status(400).send({message: 'Неверные данные'}));
+  Card.findByIdAndUpdate(
+    cardId,
+    { $pull: { likes: userId } },
+    { new: true }
+  )
+    .then(card => {
+      if (card) {
+        res.send(card);
+      } else {
+        res.status(404).send({message: 'Карточка не найдена'});
+      }
     })
-    .catch(() => res.status(404).send({message: 'Карточка не найдена'}));
+    .catch(() => res.status(400).send('Неверный ID'));
+
 };
 
 module.exports = { getAllCards, createCard, deleteCard, likeCard, dislikeCard };

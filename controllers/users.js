@@ -5,7 +5,7 @@ const createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then(user => res.send({data: user}))
-    .catch(() => res.status(400).send({message: ''}));
+    .catch(() => res.status(400).send({message: 'Неверные данные'}));
 };
 
 const getUser = (req, res) => {
@@ -15,13 +15,13 @@ const getUser = (req, res) => {
     .then((user) => {
       res.send(user);
     })
-    .catch(() => res.status(400).send({message: ''}));
+    .catch(() => res.status(400).send({message: 'Пользователь не найден'}));
 };
 
 const getAllUsers = (req, res) => {
   User.find({})
     .then(allUsers => res.send({allUsers}))
-    .catch(() => res.status(500).send({message: ''}));
+    .catch(() => res.status(500).send({message: 'Ошибка получения пользователей'}));
 };
 
 const updateUser = (req, res) => {
@@ -31,7 +31,7 @@ const updateUser = (req, res) => {
     .then((user) => {
       res.send(user);
     })
-    .catch(() => res.status(404).send({message: ''}));
+    .catch(() => res.status(404).send({message: 'Пользователь не найден'}));
 };
 
 const updateUserAvatar = (req, res) => {
@@ -40,7 +40,7 @@ const updateUserAvatar = (req, res) => {
 
   User.findByIdAndUpdate(id, avatarLink, { new: true })
     .then((user) => res.send(user))
-    .catch(() => res.status(404).send({message: ''}));
+    .catch(() => res.status(404).send({message: 'Пользователь не найден'}));
 };
 
 module.exports = {createUser, getUser, getAllUsers, updateUser, updateUserAvatar};

@@ -1,6 +1,8 @@
 const Card = require('../models/card');
 const mongoose = require('mongoose');
 
+
+// Получить все карты
 const getAllCards = (req, res) => {
   Card.find({})
     .then(allCards => res.send(allCards))
@@ -8,10 +10,10 @@ const getAllCards = (req, res) => {
 };
 
 
+// Создать карточку
 const createCard = (req, res) => {
   const { name, link } = req.body;
   const id = req.user._id;  // ВРЕМЕННО
-
   const owner = new mongoose.Types.ObjectId(id);
 
   Card.create({ name, link, owner })
@@ -20,6 +22,7 @@ const createCard = (req, res) => {
 };
 
 
+// Удалить карточку
 const deleteCard = (req, res) => {
   Card.findById(req.params.cardId)
     .then((card) => {
@@ -39,6 +42,8 @@ const deleteCard = (req, res) => {
     .catch(() => res.status(400).send({message: 'Ошибка при удалении карточки'}));
 };
 
+
+// Добавить лайк карточке
 const likeCard = (req, res) => {
   const { cardId } = req.params;
   const userId = req.user._id; // ВРЕМЕННО
@@ -59,6 +64,8 @@ const likeCard = (req, res) => {
     .catch(() => res.status(400).send({message: 'Ошибка при лайке карточки'}));
 };
 
+
+// Убрать лайк у карточки
 const dislikeCard = (req, res) => {
   const { cardId } = req.params;
   const userId = req.user._id; // ВРЕМЕННО
@@ -78,5 +85,6 @@ const dislikeCard = (req, res) => {
     .catch(() => res.status(400).send({message: 'Неверный ID'}));
 
 };
+
 
 module.exports = { getAllCards, createCard, deleteCard, likeCard, dislikeCard };

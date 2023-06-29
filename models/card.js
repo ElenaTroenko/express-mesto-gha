@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema.Types;
 
+// схема card
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,

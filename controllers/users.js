@@ -1,5 +1,7 @@
 const User = require('../models/user');
 
+
+// Создать пользователя
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
@@ -8,6 +10,8 @@ const createUser = (req, res) => {
     .catch(() => res.status(400).send({message: 'Неверные данные'}));
 };
 
+
+// Получить пользователя
 const getUser = (req, res) => {
   const id = req.params.userId;
 
@@ -22,12 +26,16 @@ const getUser = (req, res) => {
     .catch(() => res.status(400).send({message: 'Пользователь не найден'}));
 };
 
+
+// Получить всех пользователей
 const getAllUsers = (req, res) => {
   User.find({})
     .then(allUsers => res.send({allUsers}))
     .catch(() => res.status(500).send({message: 'Ошибка получения пользователей'}));
 };
 
+
+// Обновить пользователя
 const updateUser = (req, res) => {
   const id = req.user._id; // ВРЕМЕННО
 
@@ -40,10 +48,10 @@ const updateUser = (req, res) => {
         .catch(() => res.status(400).send({message: 'Неверные данные'}));
     })
     .catch(() => res.status(404).send({message: 'Пользователь не найден'}));
-
-
 };
 
+
+// Обновить аватар пользователя
 const updateUserAvatar = (req, res) => {
   const id = req.user._id; // ВРЕМЕННО
   const avatarLink = req.body.avatar;
@@ -56,5 +64,6 @@ const updateUserAvatar = (req, res) => {
     })
     .catch(() => res.status(404).send({message: 'Пользователь не найден'}));
 };
+
 
 module.exports = {createUser, getUser, getAllUsers, updateUser, updateUserAvatar};

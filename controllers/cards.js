@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const mongoose = require('mongoose');
-const sendError = require ( '../utils/utils');
+const sendError = require ('../utils/utils');
+const fixErr = require ('../utils/utils');
 
 
 // Получить все карты
@@ -33,14 +34,16 @@ const deleteCard = (req, res) => {
             if (card) {
               res.send({message: 'удалено'});
             } else {
-              sendError(res, {name: '400'}, 'удаление карточки');
+              sendError(res, {name: 'CastError'}, 'удаление карточки');
             }
           });
       } else {
-        sendError(res, {name: '404'}, 'удаление карточки');
+        sendError(res, {name: 'DocumentNotFoundError'}, 'удаление карточки');
       }
     })
-    .catch((err) => sendError(res, err, 'удаление карточки'));
+    .catch((err) => {
+      sendError(res, fixErr(err, 'DocumentNotFoundError', 'CastError'), 'удаление карточки');
+    });
 };
 
 
@@ -59,10 +62,16 @@ const likeCard = (req, res) => {
         )
           .then(card => res.send(card));
       } else {
-        sendError(res, {name: ''}, 'добавление лайка карточке');
-      }
+
+        sendError(res, {name: 'DocumentNotFoundError'}, 'отзыв лайка карточки');      }
     })
-    .catch((err) => sendError(res, err, 'добавление лайка карточке'));
+    .catch((err) => {
+      if (typeof(err) == !'CastError') {
+        sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'отзыв лайка карточки');
+      } else {
+        sendError(res, {name: 'CastError'}, 'отзыв лайка карточки');
+      }
+    });
 };
 
 
@@ -80,10 +89,10 @@ const dislikeCard = (req, res) => {
       if (card) {
         res.send(card);
       } else {
-        sendError(res, {name: ''}, 'отзыв лайка карточке');
+        sendError(res, {name: 'DocumentNotFoundError'}, 'отзыв лайка карточки');
       }
     })
-    .catch((err) =>sendError(res, err, 'отзыв лайка карточке'));
+    .catch((err) =>sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'отзыв лайка карточки'));
 
 };
 

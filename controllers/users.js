@@ -21,10 +21,10 @@ const getUser = (req, res) => {
       if (user) {
         res.send(user);
       } else {
-        sendError(res, {name: '404'}, 'получение пользователя1');
+        sendError(res, {name: 'DocumentNotFoundError'}, 'получение пользователя');
       }
     })
-    .catch((err) => sendError(res, err, 'получение пользователя2'));
+    .catch((err) => sendError(res, err, 'получение пользователя'));
 };
 
 

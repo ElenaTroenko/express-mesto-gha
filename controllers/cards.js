@@ -63,13 +63,13 @@ const likeCard = (req, res) => {
           .then(card => res.send(card));
       } else {
 
-        sendError(res, {name: 'DocumentNotFoundError'}, 'отзыв лайка карточки');      }
+        sendError(res, {name: 'DocumentNotFoundError'}, 'добавить лайк карточке');      }
     })
     .catch((err) => {
       if (typeof(err) == !'CastError') {
-        sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'отзыв лайка карточки');
+        sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'добавить лайк карточке');
       } else {
-        sendError(res, {name: 'CastError'}, 'отзыв лайка карточки');
+        sendError(res, {name: 'CastError'}, 'добавить лайк карточке');
       }
     });
 };
@@ -92,8 +92,13 @@ const dislikeCard = (req, res) => {
         sendError(res, {name: 'DocumentNotFoundError'}, 'отзыв лайка карточки');
       }
     })
-    .catch((err) =>sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'отзыв лайка карточки'));
-
+    .catch((err) => {
+      if (typeof(err) == !'CastError') {
+        sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'отзыв лайка карточки');
+      } else {
+        sendError(res, {name: 'CastError'}, 'отзыв лайка карточки');
+      }
+    });
 };
 
 

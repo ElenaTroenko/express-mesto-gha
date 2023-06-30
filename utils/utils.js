@@ -5,7 +5,7 @@ const sendError = (res, err, msg) => {
   const ERRORS = {
     ValidationError: {code: 400, message: 'Неверные данные'},
     DocumentNotFoundError: {code: 404, message: 'Не найдено'},
-    CastError: {code: 400, message: 'Не найдено'},
+    CastError: {code: 400, message: 'Неверные данные'},
     default: {code: 500, message: 'Ошибка'},
   };
 

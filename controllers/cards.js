@@ -42,7 +42,11 @@ const deleteCard = (req, res) => {
       }
     })
     .catch((err) => {
-      sendError(res, fixErr(err, 'DocumentNotFoundError', 'CastError'), 'удаление карточки');
+      if (typeof(err) == !'CastError') {
+        sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'удаление карточки');
+      } else {
+        sendError(res, {name: 'CastError'}, 'отзыв лайка карточки');
+      }
     });
 };
 

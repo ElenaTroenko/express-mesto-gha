@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = require('./routes/router');
 const bodyParser = require('body-parser');
+const sendError = require ('./utils/utils');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -17,7 +18,7 @@ app.use((req, res, next) => {
 
 // Роуты - на роутер
 app.use('/', router);
-app.use('/', (req, res) => res.status(404).send({message: 'Страница не найдена'}));
+app.use('/', (req, res) => sendError(res, {name: 'DocumentNotFoundError'}, 'Страница не найдена'));
 
 // Подключение к БД
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb',

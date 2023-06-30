@@ -1,16 +1,13 @@
 const Card = require('../models/card');
 const mongoose = require('mongoose');
-
-const NOT_FOUND_ERROR = 404;
-const DATA_ERROR = 400;
-const ERROR = 500;
+const sendError = require ( '../utils/utils');
 
 
 // Получить все карты
 const getAllCards = (req, res) => {
   Card.find({})
     .then(allCards => res.send(allCards))
-    .catch(() => res.status(ERROR).send({message: 'Ошибка получения карточек'}));
+    .catch((err) => sendError(res, err, 'получение всех карточек'));
 };
 
 
@@ -22,7 +19,7 @@ const createCard = (req, res) => {
 
   Card.create({ name, link, owner })
     .then(card => res.send(card))
-    .catch(() => res.status(DATA_ERROR).send({message: 'Неверные данные'}));
+    .catch((err) => sendError(res, err, 'создание карточки'));
 };
 
 
@@ -36,14 +33,14 @@ const deleteCard = (req, res) => {
             if (card) {
               res.send({message: 'удалено'});
             } else {
-              res.status(NOT_FOUND_ERROR).send({message: 'Карточка не найдена'});
+              sendError(res, {name: '400'}, 'удаление карточки');
             }
           });
       } else {
-        res.status(NOT_FOUND_ERROR).send({message: 'Карточка не найдена'});
+        sendError(res, {name: '404'}, 'удаление карточки');
       }
     })
-    .catch(() => res.status(DATA_ERROR).send({message: 'Ошибка при удалении карточки'}));
+    .catch((err) => sendError(res, err, 'удаление карточки'));
 };
 
 
@@ -62,10 +59,10 @@ const likeCard = (req, res) => {
         )
           .then(card => res.send(card));
       } else {
-        res.status(NOT_FOUND_ERROR).send({message: 'Карточка не найдена'});
+        sendError(res, {name: ''}, 'добавление лайка карточке');
       }
     })
-    .catch(() => res.status(DATA_ERROR).send({message: 'Ошибка при лайке карточки'}));
+    .catch((err) => sendError(res, err, 'добавление лайка карточке'));
 };
 
 
@@ -83,10 +80,10 @@ const dislikeCard = (req, res) => {
       if (card) {
         res.send(card);
       } else {
-        res.status(NOT_FOUND_ERROR).send({message: 'Карточка не найдена'});
+        sendError(res, {name: ''}, 'отзыв лайка карточке');
       }
     })
-    .catch(() => res.status(DATA_ERROR).send({message: 'Неверный ID'}));
+    .catch((err) =>sendError(res, err, 'отзыв лайка карточке'));
 
 };
 

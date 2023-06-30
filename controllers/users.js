@@ -1,8 +1,5 @@
-const User = require('../models/user');
-
-const NOT_FOUND_ERROR = 404;
-const DATA_ERROR = 400;
-const ERROR = 500;
+const User = require ('../models/user');
+const sendError = require ( '../utils/utils');
 
 
 // Создать пользователя
@@ -11,7 +8,7 @@ const createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then(user => res.send({data: user}))
-    .catch(() => res.status(DATA_ERROR).send({message: 'Неверные данные'}));
+    .catch((err) => sendError(res, err, 'создание пользователя'));
 };
 
 
@@ -24,10 +21,10 @@ const getUser = (req, res) => {
       if (user) {
         res.send(user);
       } else {
-        res.status(NOT_FOUND_ERROR).send({message: 'Пользователь не найден'});
+        sendError(res, {name: '404'}, 'получение пользователя1');
       }
     })
-    .catch(() => res.status(DATA_ERROR).send({message: 'Пользователь не найден'}));
+    .catch((err) => sendError(res, err, 'получение пользователя2'));
 };
 
 
@@ -35,7 +32,7 @@ const getUser = (req, res) => {
 const getAllUsers = (req, res) => {
   User.find({})
     .then(allUsers => res.send({allUsers}))
-    .catch(() => res.status(ERROR).send({message: 'Ошибка получения пользователей'}));
+    .catch((err) => sendError(res, err, 'получение всех пользователей'));
 };
 
 
@@ -49,9 +46,9 @@ const updateUser = (req, res) => {
         .then((user) => {
           res.send(user);
         })
-        .catch(() => res.status(DATA_ERROR).send({message: 'Неверные данные'}));
+        .catch((err) => sendError(res, err, 'обновление пользователя'));
     })
-    .catch(() => res.status(NOT_FOUND_ERROR).send({message: 'Пользователь не найден'}));
+    .catch((err) => sendError(res, err, 'обновление пользователя'));
 };
 
 
@@ -64,9 +61,9 @@ const updateUserAvatar = (req, res) => {
     .then(() => {
       User.findByIdAndUpdate(id, {avatar: avatarLink}, { new: true, runValidators: true })
         .then((user) => res.send(user))
-        .catch(() => res.status(DATA_ERROR).send({message: 'Неверные данные'}));
+        .catch((err) => sendError(res, err, 'обновление аватара пользователя'));
     })
-    .catch(() => res.status(NOT_FOUND_ERROR).send({message: 'Пользователь не найден'}));
+    .catch((err) => sendError(res, err, 'обновление аватара пользователя'));
 };
 
 

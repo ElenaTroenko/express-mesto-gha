@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const router = require('./routes/router');
+const cardRouter = require('./routes/cards');
+const userRouter = require('./routes/cards');
 const bodyParser = require('body-parser');
 const sendError = require ('./utils/utils');
 
@@ -16,8 +17,11 @@ app.use((req, res, next) => {
   next();
 });  // ВРЕМЕННО
 
-// Роуты - на роутер
-app.use('/', router);
+// Роутер карт
+app.use('/', cardRouter);
+// Роутер пользователей
+app.use('/', userRouter);
+// Хэндлер 404 страниц
 app.use('/', (req, res) => sendError(res, {name: 'DocumentNotFoundError'}, 'Страница не найдена'));
 
 // Подключение к БД

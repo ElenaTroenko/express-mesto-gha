@@ -45,7 +45,7 @@ const deleteCard = (req, res) => {
       if (typeof(err) == !'CastError') {
         sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'удаление карточки');
       } else {
-        sendError(res, {name: 'CastError'}, 'отзыв лайка карточки');
+        sendError(res, {name: 'CastError'}, 'удаление карточки');
       }
     });
 };
@@ -66,8 +66,8 @@ const likeCard = (req, res) => {
         )
           .then(card => res.send(card));
       } else {
-
-        sendError(res, {name: 'DocumentNotFoundError'}, 'добавить лайк карточке');      }
+        sendError(res, {name: 'DocumentNotFoundError'}, 'добавить лайк карточке');
+      }
     })
     .catch((err) => {
       if (typeof(err) == !'CastError') {

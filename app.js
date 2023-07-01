@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cardRouter = require('./routes/cards');
-const userRouter = require('./routes/cards');
+const userRouter = require('./routes/users');
 const bodyParser = require('body-parser');
 const sendError = require ('./utils/utils');
 

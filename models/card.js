@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
+const { urlRegex } = require('../utils/constants');
 const { ObjectId } = mongoose.Schema.Types;
+
 
 // схема card
 const cardSchema = new mongoose.Schema({
@@ -11,7 +13,9 @@ const cardSchema = new mongoose.Schema({
   },
   link: {
     type: String,
-    required: true,
+    required: function() {
+      return urlRegex.test(this.avatar);
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -28,5 +32,6 @@ const cardSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
 
 module.exports = mongoose.model('card', cardSchema);

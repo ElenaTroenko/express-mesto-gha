@@ -1,60 +1,64 @@
 const Card = require('../models/card');
 const mongoose = require('mongoose');
-const sendError = require ('../utils/utils');
-const fixErr = require ('../utils/utils');
+const fixErr = require('../utils/utils');
+const { UniError } = require('../utils/errors');
 
 
 // Получить все карты
-const getAllCards = (req, res) => {
+const getAllCards = (req, res, next) => {
   Card.find({})
     .then(allCards => res.send(allCards))
-    .catch((err) => sendError(res, err, 'получение всех карточек'));
+    .catch((err) => next(new UniError(err)));
 };
 
 
 // Создать карточку
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  const id = req.user._id;  // ВРЕМЕННО
+  const id = req.user._id;
   const owner = new mongoose.Types.ObjectId(id);
 
   Card.create({ name, link, owner })
     .then(card => res.send(card))
-    .catch((err) => sendError(res, err, 'создание карточки'));
+    .catch((err) => next(new UniError(err)));
 };
 
 
 // Удалить карточку
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (card) {
+        if (!(card.owner._id == req.user._id)) {
+          throw(new UniError({message: 'Доступ запрещен', statusCode: 403}, 'удаление карточки'));
+        }
+        // права подтверждены. карта есть. выполняем удаление
         Card.findByIdAndRemove(req.params.cardId)
           .then(() => {
             if (card) {
               res.send({message: 'удалено'});
             } else {
-              sendError(res, {name: 'CastError'}, 'удаление карточки');
+              throw(new UniError({name: 'CastError'}, 'удаление карточки'));
             }
           });
       } else {
-        sendError(res, {name: 'DocumentNotFoundError'}, 'удаление карточки');
+        throw(new UniError({name: 'DocumentNotFoundError'}, 'удаление карточки'));
       }
     })
     .catch((err) => {
       if (typeof(err) == !'CastError') {
-        sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'удаление карточки');
+        next(fixErr(err, 'CastError', 'DocumentNotFoundError'));
       } else {
-        sendError(res, {name: 'CastError'}, 'удаление карточки');
+        next({name: 'CastError'});
       }
     });
 };
 
 
 // Добавить лайк карточке
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const userId = req.user._id; // ВРЕМЕННО
+  const userId = req.user._id;
 
   Card.findById(cardId)
     .then((card) => {
@@ -66,23 +70,23 @@ const likeCard = (req, res) => {
         )
           .then(card => res.send(card));
       } else {
-        sendError(res, {name: 'DocumentNotFoundError'}, 'добавить лайк карточке');
+        throw(new UniError({name: 'DocumentNotFoundError'}, 'добавить лайк карточке'));
       }
     })
     .catch((err) => {
       if (typeof(err) == !'CastError') {
-        sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'добавить лайк карточке');
+        next(fixErr(err, 'CastError', 'DocumentNotFoundError'));
       } else {
-        sendError(res, {name: 'CastError'}, 'добавить лайк карточке');
+        next({name: 'CastError'});
       }
     });
 };
 
 
 // Убрать лайк у карточки
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
-  const userId = req.user._id; // ВРЕМЕННО
+  const userId = req.user._id;
 
   Card.findByIdAndUpdate(
     cardId,
@@ -93,14 +97,14 @@ const dislikeCard = (req, res) => {
       if (card) {
         res.send(card);
       } else {
-        sendError(res, {name: 'DocumentNotFoundError'}, 'отзыв лайка карточки');
+        throw(new UniError({name: 'DocumentNotFoundError'}));
       }
     })
     .catch((err) => {
       if (typeof(err) == !'CastError') {
-        sendError(res, fixErr(err, 'CastError', 'DocumentNotFoundError'), 'отзыв лайка карточки');
+        next(fixErr(err, 'CastError', 'DocumentNotFoundError'));
       } else {
-        sendError(res, {name: 'CastError'}, 'отзыв лайка карточки');
+        next({name: 'CastError'}, 'отзыв лайка карточки');
       }
     });
 };

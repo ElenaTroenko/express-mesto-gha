@@ -1,19 +1,31 @@
 const User = require ('../models/user');
-const sendError = require ( '../utils/utils');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { UniError } = require('../utils/errors');
+const { secredKey } = require('../utils/constants');
 
 
 // Создать пользователя
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+const createUser = (req, res, next) => {
+  const { name, about, avatar, email, password } = req.body;
 
-  User.create({ name, about, avatar })
-    .then(user => res.send({data: user}))
-    .catch((err) => sendError(res, err, 'создание пользователя'));
+  bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({ name, about, avatar, email, hash })
+        .then(user => res.send({data: user}));
+    })
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new UniError({statusCode: 409, message: 'Пользователь с таким email существует'}, 'создание нового пользователя'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 
 // Получить пользователя
-const getUser = (req, res) => {
+const getUser = (req, res, next) => {
   const id = req.params.userId;
 
   User.findById(id)
@@ -21,50 +33,95 @@ const getUser = (req, res) => {
       if (user) {
         res.send(user);
       } else {
-        sendError(res, {name: 'DocumentNotFoundError'}, 'получение пользователя');
+        throw(new UniError({name: 'DocumentNotFoundError'}, 'получение пользователя'));
       }
     })
-    .catch((err) => sendError(res, err, 'получение пользователя'));
+    .catch((err) => next(err));
+};
+
+
+// Получить информацию о пользователе
+const getUserInfo = (req, res, next) => {
+  const id = req.user._id;
+
+  User.findById(id)
+    .then((user) => {
+      if (user) {
+        res.send(user);
+      } else {
+        throw(new UniError({name: 'DocumentNotFoundError'}, 'получение пользователя'));
+      }
+    })
+    .catch((err) => next(err));
 };
 
 
 // Получить всех пользователей
-const getAllUsers = (req, res) => {
+const getAllUsers = (req, res, next) => {
   User.find({})
     .then(allUsers => res.send({allUsers}))
-    .catch((err) => sendError(res, err, 'получение всех пользователей'));
+    .catch((err) => next(err));
 };
 
 
 // Обновить пользователя
-const updateUser = (req, res) => {
-  const id = req.user._id; // ВРЕМЕННО
+const updateUser = (req, res, next) => {
+  const id = req.user._id;
 
   User.findById(id)
     .then(() => {
       User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
         .then((user) => {
+          if (!(user._id == id)) {
+            throw(new UniError({message: 'Доступ запрещен', statusCode: 403}, 'обновление пользователя'));
+          }
           res.send(user);
-        })
-        .catch((err) => sendError(res, err, 'обновление пользователя'));
+        });
     })
-    .catch((err) => sendError(res, err, 'обновление пользователя'));
+    .catch((err) => next(err));
 };
 
 
 // Обновить аватар пользователя
-const updateUserAvatar = (req, res) => {
-  const id = req.user._id; // ВРЕМЕННО
+const updateUserAvatar = (req, res, next) => {
+  const id = req.user._id;
   const avatarLink = req.body.avatar;
 
   User.findById(id)
     .then(() => {
       User.findByIdAndUpdate(id, {avatar: avatarLink}, { new: true, runValidators: true })
-        .then((user) => res.send(user))
-        .catch((err) => sendError(res, err, 'обновление аватара пользователя'));
+        .then((user) => {
+          if (!(user._id == id)) {
+            throw(new UniError({message: 'Доступ запрещен', statusCode: 403}, 'обновление пользователя'));
+          }
+          res.send(user);
+        });
     })
-    .catch((err) => sendError(res, err, 'обновление аватара пользователя'));
+    .catch((err) => next(err));
+};
+
+// Логин пользователя
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findOne({email})
+    .select('+password')
+    .then((user) => {
+      if (!user) {
+        throw(new UniError({statusCode: 401, message: 'Пользователь c такими email и паролем не найден'}), 'вход пользователя');
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw(new UniError({statusCode: 401, message: 'Пользователь c такими email и паролем не найден'}), 'вход пользователя');
+          }
+          const token = jwt.sign({_id: user._id}, secredKey, { expiresIn: '7d' });
+          res.send({token});
+        });
+    })
+    .catch((err) => next(err));
 };
 
 
-module.exports = {createUser, getUser, getAllUsers, updateUser, updateUserAvatar};
+module.exports = {createUser, getUser, getAllUsers, updateUser,
+  updateUserAvatar, login, getUserInfo};

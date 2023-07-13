@@ -1,14 +1,14 @@
 const jwt = require('jsonwebtoken');
+const UniError = require('../utils/errors');
+const { secredKey } = require('../utils/constants');
 
+const bearerSign = 'Bearer ';
 
 module.exports = (req, res, next) => {
   const {authorization} = req.headers;
-  const bearerSign = 'Bearer ';
-  const UniError = require('../utils/utils');
-  const { secredKey } = require('../utils/constants');
 
   if (!authorization || !authorization.startsWith(bearerSign)) {
-    throw(new UniError({message: 'нет авторизации', statusCode: 401}));
+    throw(new UniError({message: 'неверный токен', name: 'UnAuthorizedError'}, 'защита авторизацией'));
   }
 
   const token = authorization.replace(bearerSign, '');
@@ -18,7 +18,8 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, secredKey);
   } catch (err) {
-    throw(new UniError({message: 'неверный токен', statusCode: 401}));  }
+    next(new UniError({message: 'неверный токен', name: 'WrongTokenError'}, 'защита авторизацией'));
+  }
 
   req.user = payload;
   next();

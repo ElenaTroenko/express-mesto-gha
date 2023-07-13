@@ -3,23 +3,27 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UniError = require('../utils/errors');
 const { secredKey } = require('../utils/constants');
+const { sendError } = require('../utils/utils');
 
 
 // Создать пользователя
 const createUser = (req, res, next) => {
+
   const { name, about, avatar, email, password } = req.body;
 
   bcrypt.hash(password, 10)
-    .then((hash) => {
-      User.create({ name, about, avatar, email, hash })
-        .then(user => res.send({data: user}));
+    .then(async (hash) => {
+      try {
+        await User.create({ name, about, avatar, email, hash })
+          .then((user) => {
+            res.send({data: user});
+          });
+      } catch(err) {
+        sendError(new UniError(err, 'создание пользователя'), res);
+      }
     })
     .catch((err) => {
-      if (err.code === 11000) {
-        next(new UniError({statusCode: 409, message: 'Пользователь с таким email существует'}, 'создание нового пользователя'));
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
@@ -90,7 +94,7 @@ const updateUserAvatar = (req, res, next) => {
 
   User.findById(id)
     .then(() => {
-      User.findByIdAndUpdate(id, {avatar: avatarLink}, { new: true, runValidators: true })
+      User.findByIdAndUpdate(id, {avatar: avatarLink}, {new: true, runValidators: true})
         .then((user) => {
           if (!(user._id == id)) {
             throw(new UniError({message: 'Доступ запрещен', statusCode: 403}, 'обновление пользователя'));

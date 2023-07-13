@@ -5,11 +5,7 @@ const {createUser, getAllUsers, getUser, updateUserAvatar,
 const { Joi, celebrate } = require('celebrate');
 const { urlRegex } = require('../utils/constants');
 
-const authSchema = {
-  headers: Joi.object().keys({
-    authorization: Joi.string().required(),
-  })
-};
+
 const createUserSchema = {
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -51,7 +47,7 @@ userRouter.post('/signup', celebrate(createUserSchema), createUser);
 userRouter.post('/signin', celebrate(loginSchema), login);
 
 // Мидлвар-защита роутов авторизацией
-userRouter.use('/', celebrate(authSchema), auth);
+userRouter.use('/', auth);
 
 // роуты user
 userRouter.get('/users', getAllUsers);

@@ -32,6 +32,7 @@
     "joi": "^17.9.2",
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.3.1",
+    "mongoose-unique-validator": "^4.0.0",
     "validator": "^13.9.0"
   }
 }

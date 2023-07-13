@@ -11,6 +11,9 @@ class UniError extends Error {
       ValidationError: {code: 400, message: 'Неверные данные'},
       DocumentNotFoundError: {code: 404, message: 'Не найдено'},
       CastError: {code: 400, message: 'Неверные данные'},
+      MongoServerError: {code: 409, message: 'Запись уже существует'},
+      WrongTokenError: {code: 401, message: 'Неверный токен'},
+      UnAuthorizedError: {code: 401, message: 'Нет авторизации'},
       default: {code: 500, message: 'Ошибка'},
     };
 

@@ -18,8 +18,9 @@ app.use('/', (req, res, next) => {  // Хэндлер 404 страниц
   next(new UniError({name: 'DocumentNotFoundError'}, 'Страница не найдена'));
 });
 app.use(errors());                  // Обработчик ошибок celebrate
-app.use((err, req, res) => {        // Централизованный бработчик ошибок
+app.use((err, req, res, next) => {  // Централизованный бработчик ошибок
   sendError(err, res);
+  next();
 });
 
 // Подключение к БД

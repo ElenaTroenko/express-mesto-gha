@@ -11,7 +11,7 @@ const createCardSchema = {
 };
 const baseCardSchema = {
   params: Joi.object().keys({
-    cardId: Joi.required(),
+    cardId: Joi.required().id(),
   }),
 };
 

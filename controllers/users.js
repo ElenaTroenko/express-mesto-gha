@@ -33,7 +33,7 @@ const getUserInfo = (req, res, next) => {
         throw(new UniError({name: 'DocumentNotFoundError'}, 'получение пользователя'));
       }
     })
-    .catch((err) => next(err));
+    .catch((err) => next(new UniError(err), 'получение пользователя .catch'));
 };
 
 
@@ -91,7 +91,8 @@ const createUser = (req, res, next) => {
       try {
         await User.create({ name, about, avatar, email, password: hash })
           .then((user) => {
-            res.send({user});
+            User.findById(user._id)
+              .then((user) => res.send({user}));
           });
       } catch(err) {
         next(new UniError(err, 'создание пользователя'), res);

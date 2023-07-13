@@ -23,7 +23,7 @@ const loginSchema = {
 };
 const getUserSchema = {
   params: Joi.object().keys({
-    userId: Joi.required(),
+    userId: Joi.required().id(),
   })
 };
 const updateUserSchema= {

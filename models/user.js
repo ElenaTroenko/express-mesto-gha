@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const { urlRegex } = require('../utils/constants');
 
 // схема user
 const userSchema = new mongoose.Schema({
@@ -19,9 +18,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    required: function() {
-      return urlRegex.test(this.avatar);
-    },
+    require: true,
   },
   email: {
     unique: true,

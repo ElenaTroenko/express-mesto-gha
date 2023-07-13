@@ -1,11 +1,12 @@
 const cardRouter = require('express').Router();
 const {getAllCards, createCard, deleteCard, likeCard, dislikeCard} = require('../controllers/cards');
 const { Joi, celebrate } = require('celebrate');
+const { urlRegex } = require('../utils/constants');
 
 const createCardSchema = {
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required(),
+    link: Joi.string().required().pattern(urlRegex),
   }),
 };
 const baseCardSchema = {

@@ -1,4 +1,3 @@
-
 // Уточнение ошибки. Меняет имя ошибки на новое,
 // если оно совпадает с требуемым для замены
 const fixErr = (err, oldName, newName) => {
@@ -10,4 +9,12 @@ const fixErr = (err, oldName, newName) => {
 };
 
 
-module.exports = fixErr;
+// шлет ошибку в ответ (res)
+const sendError = (err, res) => {
+  const { statusCode = 500, message = 'Что-то пошло не так...' } = err;
+
+  res.status(statusCode).send({message});
+};
+
+
+module.exports = { fixErr, sendError };

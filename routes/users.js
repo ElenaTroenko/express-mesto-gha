@@ -3,6 +3,7 @@ const auth = require('../middlewares/auth');
 const {createUser, getAllUsers, getUser, updateUserAvatar,
   getUserInfo, updateUser, login} = require('../controllers/users');
 const { Joi, celebrate } = require('celebrate');
+const { urlRegex } = require('../utils/constants');
 
 const authSchema = {
   headers: Joi.object().keys({
@@ -13,7 +14,7 @@ const createUserSchema = {
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().pattern(urlRegex),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
@@ -33,14 +34,14 @@ const updateUserSchema= {
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().pattern(urlRegex),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
 };
 const updateUserAvatarSchema = {
   body: Joi.object().keys({
-    avatar: Joi.string().required(),
+    avatar: Joi.string().required().pattern(urlRegex),
   }),
 };
 

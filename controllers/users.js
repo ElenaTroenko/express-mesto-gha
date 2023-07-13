@@ -1,7 +1,7 @@
 const User = require ('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { UniError } = require('../utils/errors');
+const UniError = require('../utils/errors');
 const { secredKey } = require('../utils/constants');
 
 
@@ -84,6 +84,7 @@ const updateUser = (req, res, next) => {
 
 // Обновить аватар пользователя
 const updateUserAvatar = (req, res, next) => {
+
   const id = req.user._id;
   const avatarLink = req.body.avatar;
 

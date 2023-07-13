@@ -5,4 +5,4 @@ const secredKey = 'some-secred-key';
 const urlRegex = /https?:\/\/[-a-zA-Z0-9._~:/?#\[\]@!$&'()*\+,;=]{5,}/;
 
 
-module.exports = secredKey, urlRegex;
+module.exports = { secredKey, urlRegex };

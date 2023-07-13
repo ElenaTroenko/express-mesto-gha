@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use('/', userRouter);           // Роутер пользователей
 app.use('/', cardRouter);           // Роутер карт
 app.use('/', (req, res, next) => {  // Хэндлер 404 страниц
-  next(new UniError({name: 'DocumentNotFoundError'}, 'Страница не найдена'));
+  throw(new UniError({name: 'DocumentNotFoundError'}, 'Страница не найдена'));
 });
 app.use(errors());                  // Обработчик ошибок celebrate
 app.use((err, req, res, next) => {  // Централизованный бработчик ошибок

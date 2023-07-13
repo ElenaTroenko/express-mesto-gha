@@ -3,29 +3,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UniError = require('../utils/errors');
 const { secredKey } = require('../utils/constants');
-const { sendError } = require('../utils/utils');
-
-
-// Создать пользователя
-const createUser = (req, res, next) => {
-
-  const { name, about, avatar, email, password } = req.body;
-
-  bcrypt.hash(password, 10)
-    .then(async (hash) => {
-      try {
-        await User.create({ name, about, avatar, email, hash })
-          .then((user) => {
-            res.send({data: user});
-          });
-      } catch(err) {
-        sendError(new UniError(err, 'создание пользователя'), res);
-      }
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
 
 
 // Получить пользователя
@@ -88,7 +65,6 @@ const updateUser = (req, res, next) => {
 
 // Обновить аватар пользователя
 const updateUserAvatar = (req, res, next) => {
-
   const id = req.user._id;
   const avatarLink = req.body.avatar;
 
@@ -105,6 +81,28 @@ const updateUserAvatar = (req, res, next) => {
     .catch((err) => next(err));
 };
 
+
+// Создать пользователя
+const createUser = (req, res, next) => {
+  const { name, about, avatar, email, password } = req.body;
+
+  bcrypt.hash(password, 10)
+    .then(async (hash) => {
+      try {
+        await User.create({ name, about, avatar, email, password: hash })
+          .then((user) => {
+            res.send({user});
+          });
+      } catch(err) {
+        next(new UniError(err, 'создание пользователя'), res);
+      }
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+
 // Логин пользователя
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -113,18 +111,18 @@ const login = (req, res, next) => {
     .select('+password')
     .then((user) => {
       if (!user) {
-        throw(new UniError({statusCode: 401, message: 'Пользователь c такими email и паролем не найден'}), 'вход пользователя');
+        throw(new UniError({name: 'LoginError'}, 'вход пользователя'));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw(new UniError({statusCode: 401, message: 'Пользователь c такими email и паролем не найден'}), 'вход пользователя');
+            throw(new UniError({name: 'LoginError'}, 'вход пользователя'));
           }
           const token = jwt.sign({_id: user._id}, secredKey, { expiresIn: '7d' });
           res.send({token});
         });
     })
-    .catch((err) => next(err));
+    .catch(() => next(new UniError({name: 'LoginError'}, 'вход пользователя')));
 };
 
 

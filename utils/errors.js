@@ -14,6 +14,7 @@ class UniError extends Error {
       MongoServerError: {code: 409, message: 'Запись уже существует'},
       WrongTokenError: {code: 401, message: 'Неверный токен'},
       UnAuthorizedError: {code: 401, message: 'Нет авторизации'},
+      LoginError: {code: 401, message: 'Пользователь c такими email и паролем не найден'},
       default: {code: 500, message: 'Ошибка'},
     };
 

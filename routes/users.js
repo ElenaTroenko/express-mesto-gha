@@ -57,5 +57,4 @@ userRouter.patch('/users/me', celebrate(updateUserSchema), updateUser);
 userRouter.patch('/users/me/avatar', celebrate(updateUserAvatarSchema), updateUserAvatar);
 
 
-
 module.exports = userRouter;

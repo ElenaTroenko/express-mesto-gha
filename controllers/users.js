@@ -54,7 +54,7 @@ const updateUser = (req, res, next) => {
       User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
         .then((user) => {
           if (!(user._id == id)) {
-            throw(new UniError({message: 'Доступ запрещен', statusCode: 403}, 'обновление пользователя'));
+            throw(new UniError({name: 'AccessDeniedError'}, 'обновление пользователя'));
           }
           res.send(user);
         });
@@ -73,7 +73,7 @@ const updateUserAvatar = (req, res, next) => {
       User.findByIdAndUpdate(id, {avatar: avatarLink}, {new: true, runValidators: true})
         .then((user) => {
           if (!(user._id == id)) {
-            throw(new UniError({message: 'Доступ запрещен', statusCode: 403}, 'обновление пользователя'));
+            throw(new UniError({name: 'AccessDeniedError'}, 'обновление пользователя'));
           }
           res.send(user);
         });

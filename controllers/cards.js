@@ -1,14 +1,14 @@
 const Card = require('../models/card');
 const mongoose = require('mongoose');
 const fixErr = require('../utils/utils');
-const { UniError } = require('../utils/errors');
+const UniError = require('../utils/errors');
 
 
 // Получить все карты
 const getAllCards = (req, res, next) => {
   Card.find({})
     .then(allCards => res.send(allCards))
-    .catch((err) => next(new UniError(err)));
+    .catch((err) => next(new UniError(err, 'получение всех карточек')));
 };
 
 
@@ -20,7 +20,7 @@ const createCard = (req, res, next) => {
 
   Card.create({ name, link, owner })
     .then(card => res.send(card))
-    .catch((err) => next(new UniError(err)));
+    .catch((err) => next(new UniError(err, 'создание карточки')));
 };
 
 
@@ -30,7 +30,7 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (card) {
         if (!(card.owner._id == req.user._id)) {
-          throw(new UniError({message: 'Доступ запрещен', statusCode: 403}, 'удаление карточки'));
+          throw(new UniError({name: 'AccessDeniedError'}, 'удаление карточки'));
         }
         // права подтверждены. карта есть. выполняем удаление
         Card.findByIdAndRemove(req.params.cardId)
@@ -47,9 +47,9 @@ const deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (typeof(err) == !'CastError') {
-        next(fixErr(err, 'CastError', 'DocumentNotFoundError'));
+        next(new UniError(fixErr(err, 'CastError', 'DocumentNotFoundError')));
       } else {
-        next({name: 'CastError'});
+        next(new UniError({name: 'CastError'}));
       }
     });
 };
@@ -68,16 +68,16 @@ const likeCard = (req, res, next) => {
           { $addToSet: { likes: userId } },
           { new: true }
         )
-          .then(card => res.send(card));
+          .then((card) => res.send(card));
       } else {
         throw(new UniError({name: 'DocumentNotFoundError'}, 'добавить лайк карточке'));
       }
     })
     .catch((err) => {
       if (typeof(err) == !'CastError') {
-        next(fixErr(err, 'CastError', 'DocumentNotFoundError'));
+        next(new UniError(fixErr(err, 'CastError', 'DocumentNotFoundError')));
       } else {
-        next({name: 'CastError'});
+        next(new UniError({name: 'CastError'}));
       }
     });
 };
@@ -102,9 +102,9 @@ const dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (typeof(err) == !'CastError') {
-        next(fixErr(err, 'CastError', 'DocumentNotFoundError'));
+        next(new UniError(fixErr(err, 'CastError', 'DocumentNotFoundError')));
       } else {
-        next({name: 'CastError'}, 'отзыв лайка карточки');
+        next(new UniError({name: 'CastError'}, 'отзыв лайка карточки'));
       }
     });
 };

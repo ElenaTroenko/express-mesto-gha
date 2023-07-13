@@ -15,6 +15,7 @@ class UniError extends Error {
       WrongTokenError: {code: 401, message: 'Неверный токен'},
       UnAuthorizedError: {code: 401, message: 'Нет авторизации'},
       LoginError: {code: 401, message: 'Пользователь c такими email и паролем не найден'},
+      AccessDeniedError: {code: 403, message: 'Доступ запрещен'},
       default: {code: 500, message: 'Ошибка'},
     };
 

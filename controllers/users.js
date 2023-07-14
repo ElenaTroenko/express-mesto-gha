@@ -49,15 +49,12 @@ const getAllUsers = (req, res, next) => {
 const updateUser = (req, res, next) => {
   const id = req.user._id;
 
-  User.findById(id)
-    .then(() => {
-      User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
-        .then((user) => {
-          if (!(user._id == id)) {
-            throw(new UniError({name: 'AccessDeniedError'}, 'обновление пользователя'));
-          }
-          res.send(user);
-        });
+  User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        throw(new UniError({name: 'DocumentNotFound'}, 'обновление пользователя'));
+      }
+      res.send(user);
     })
     .catch((err) => next(err));
 };

@@ -23,7 +23,7 @@ const loginSchema = {
 };
 const getUserSchema = {
   params: Joi.object().keys({
-    userId: Joi.required().id(),
+    userId: Joi.string().length(24).required(),
   })
 };
 const updateUserSchema= {
@@ -31,8 +31,8 @@ const updateUserSchema= {
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(urlRegex),
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+    email: Joi.string().email(),
+    password: Joi.string().min(8),
   }),
 };
 const updateUserAvatarSchema = {
@@ -51,8 +51,8 @@ userRouter.use('/', auth);
 
 // роуты user
 userRouter.get('/users', getAllUsers);
-userRouter.get('/users/:userId', celebrate(getUserSchema), getUser);
 userRouter.get('/users/me', getUserInfo);
+userRouter.get('/users/:userId', celebrate(getUserSchema), getUser);
 userRouter.patch('/users/me', celebrate(updateUserSchema), updateUser);
 userRouter.patch('/users/me/avatar', celebrate(updateUserAvatarSchema), updateUserAvatar);
 

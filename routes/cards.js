@@ -3,6 +3,7 @@ const {getAllCards, createCard, deleteCard, likeCard, dislikeCard} = require('..
 const { Joi, celebrate } = require('celebrate');
 const { urlRegex } = require('../utils/constants');
 
+
 const createCardSchema = {
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
@@ -11,7 +12,7 @@ const createCardSchema = {
 };
 const baseCardSchema = {
   params: Joi.object().keys({
-    cardId: Joi.required().id(),
+    cardId: Joi.string().length(24).required(),
   }),
 };
 

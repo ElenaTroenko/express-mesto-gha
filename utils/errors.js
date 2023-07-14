@@ -27,11 +27,13 @@ class UniError extends Error {
     let errorCode = this._ERRORS.default.code;
     let errorMessage = `${err.message ? err.message : this._ERRORS.default.message}: (${place})`;
 
+
     if (this._ERRORS[err.name]) {
       errorCode = this._ERRORS[err.name].code;
       errorMessage = `${this._ERRORS[err.name].message} (${place})`;
     }
 
+    this.name = err.name;
     this.statusCode = errorCode;
     this.message = `${errorMessage} [${err.name}]`;
   }

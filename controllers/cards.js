@@ -28,7 +28,7 @@ const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (card) {
-        if (card.owner._id !== req.user._id) {
+        if (String(card.owner._id).replace('new OwnerId("', '').replace('")', '') !== req.user._id) {
           throw(new UniError({name:'AccessDeniedError'}));
         }
         // права подтверждены. карта есть. выполняем удаление

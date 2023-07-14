@@ -21,8 +21,9 @@ const baseCardSchema = {
 cardRouter.get('/cards', getAllCards);
 cardRouter.post('/cards', celebrate(createCardSchema), createCard);
 cardRouter.delete('/cards/:cardId', celebrate(baseCardSchema), deleteCard);
-cardRouter.put('/cards/:cardId/likes', celebrate(baseCardSchema), likeCard);
 cardRouter.delete('/cards/:cardId/likes', celebrate(baseCardSchema), dislikeCard);
+cardRouter.put('/cards/:cardId/likes', celebrate(baseCardSchema), likeCard);
+
 
 
 module.exports = cardRouter;

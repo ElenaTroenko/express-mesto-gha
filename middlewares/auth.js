@@ -4,10 +4,9 @@ module.exports = (req, res, next) => {
   const { secredKey } = require('../utils/constants');
 
   const bearerSign = 'Bearer ';
-
   const {authorization} = req.headers;
 
-
+  // Проверка существования авторизационных данных и соответствия их Bearer
   if (!authorization || !authorization.startsWith(bearerSign)) {
     throw(new UniError({name: 'UnAuthorizedError'}, 'нет авторизационных данных в заголовке'));
   }
@@ -19,7 +18,7 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, secredKey);
   } catch (err) {
-    throw(new UniError({name: 'WrongTokenError'}, 'неверный токен'));
+    throw(new UniError({name: 'WrongTokenError'}, 'auth middleware'));
   }
 
   req.user = payload;

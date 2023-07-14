@@ -12,19 +12,9 @@ const app = express();
 
 
 app.use(bodyParser.json());
-
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '64b01ed6fe402810a5f0dc64'
-//   };
-
-//   next();
-// });
-
-
 app.use('/', userRouter);           // Роутер пользователей
 app.use('/', cardRouter);           // Роутер карт
-app.use('/', () => {  // Хэндлер 404 страниц
+app.use('/', () => {                // Хэндлер 404 страниц
   throw(new UniError({name: 'DocumentNotFoundError'}, 'Страница не найдена'));
 });
 app.use(errors());                  // Обработчик ошибок celebrate

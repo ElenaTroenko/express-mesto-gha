@@ -6,4 +6,4 @@ const sendError = (err, res) => {
 };
 
 
-module.exports = sendError;
+module.exports = { sendError };

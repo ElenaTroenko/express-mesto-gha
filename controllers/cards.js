@@ -30,7 +30,7 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (card) {
         if (card.owner._id !== req.user._id) {
-          throw(new UniError({name: 'AccessDeniedError'}, 'удаление карточки'));
+          throw(new UniError({name: 'AccessDeniedError'}, 'удаление карточки 0'));
         }
         // права подтверждены. карта есть. выполняем удаление
         Card.findByIdAndRemove(req.params.cardId)
@@ -38,18 +38,18 @@ const deleteCard = (req, res, next) => {
             if (card) {
               res.send({message: 'удалено'});
             } else {
-              throw(new UniError({name: 'CastError'}, 'удаление карточки'));
+              throw(new UniError({name: 'CastError'}, 'удаление карточки 1'));
             }
           });
       } else {
-        throw(new UniError({name: 'DocumentNotFoundError'}, 'удаление карточки'));
+        throw(new UniError({name: 'DocumentNotFoundError'}, 'удаление карточки 2'));
       }
     })
     .catch((err) => {
       if (typeof(err) == !'CastError') {
-        next(new UniError(fixErr(err, 'CastError', 'DocumentNotFoundError'), 'удаление карточки .catch'));
+        next(new UniError(fixErr(err, 'CastError', 'DocumentNotFoundError'), 'удаление карточки .catch 1'));
       } else {
-        next(new UniError({name: 'CastError'}, 'удаление карточки .catch'));
+        next(new UniError({name: 'CastError'}, 'удаление карточки .catch 2'));
       }
     });
 };

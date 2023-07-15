@@ -16,7 +16,7 @@ class UniError extends Error {
       UnAuthorizedError: {code: 401, message: 'Нет авторизации'},
       LoginError: {code: 401, message: 'Пользователь c такими email и паролем не найден'},
       AccessDeniedError: {code: 403, message: 'Доступ запрещен'},
-      default: {code: 500, message: 'Ошибка'},
+      default: {code: 500, message: 'На сервере произошла ошибка'},
     };
 
     // заполнить

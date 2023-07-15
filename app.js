@@ -8,6 +8,7 @@ const { sendError } = require('./utils/utils');
 const { errors } = require('celebrate');
 
 const { PORT = 3000 } = process.env;
+const { DB = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 const app = express();
 
 
@@ -24,8 +25,7 @@ app.use((err, req, res, next) => {  // Централизованный браб
 });
 
 // Подключение к БД
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb',
-);
+mongoose.connect(DB);
 
 // Запуск
 app.listen(PORT, () => {

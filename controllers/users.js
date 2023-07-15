@@ -48,15 +48,14 @@ const getAllUsers = (req, res, next) => {
 // Обновить пользователя
 const updateUser = (req, res, next) => {
   const id = req.user._id;
-
   User.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw(new UniError({name: 'DocumentNotFound'}, 'обновление пользователя'));
+        throw(new UniError({name: 'DocumentNotFound'}));
       }
       res.send(user);
     })
-    .catch((err) => next(err));
+    .catch((err) => next(new UniError(err, 'обновление пользователя')));
 };
 
 
@@ -65,15 +64,9 @@ const updateUserAvatar = (req, res, next) => {
   const id = req.user._id;
   const avatarLink = req.body.avatar;
 
-  User.findById(id)
-    .then(() => {
-      User.findByIdAndUpdate(id, {avatar: avatarLink}, {new: true, runValidators: true})
-        .then((user) => {
-          if (!(user._id == id)) {
-            throw(new UniError({name: 'AccessDeniedError'}, 'обновление пользователя'));
-          }
-          res.send(user);
-        });
+  User.findByIdAndUpdate(id, {avatar: avatarLink}, {new: true, runValidators: true})
+    .then((user) => {
+      res.send(user);
     })
     .catch((err) => next(err));
 };

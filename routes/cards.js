@@ -25,5 +25,4 @@ cardRouter.delete('/cards/:cardId/likes', celebrate(baseCardSchema), dislikeCard
 cardRouter.put('/cards/:cardId/likes', celebrate(baseCardSchema), likeCard);
 
 
-
 module.exports = cardRouter;

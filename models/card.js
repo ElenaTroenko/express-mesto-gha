@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema.Types;
+const { urlRegex } = require('../utils/constants');
 
 
 // схема card
@@ -13,6 +14,11 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator: function (newLink) {
+        return urlRegex.test(newLink);
+      },
+    },
   },
   owner: {
     type: ObjectId,
